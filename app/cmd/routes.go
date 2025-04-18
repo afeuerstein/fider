@@ -44,6 +44,16 @@ func routes(r *web.Engine) *web.Engine {
 		assets.Static("/assets/*filepath", "dist")
 	}
 
+	feed := r.Group()
+	{
+		feed.Use(middlewares.CORS())
+		feed.Use(middlewares.WebSetup())
+		feed.Use(middlewares.Tenant())
+		//feed.Use(middlewares.ClientCache(5 * time.Minute))
+
+		feed.Get("/feed.atom", handlers.GlobalFeed())
+	}
+
 	r.Use(middlewares.Session())
 
 	r.Get("/robots.txt", handlers.RobotsTXT())
